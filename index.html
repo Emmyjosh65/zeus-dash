@@ -1,0 +1,2630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>ZEUS DASH - Endless Runner</title>
+<style>
+/* ============================================
+   ZEUS DASH - Premium Game Styles
+   ============================================ */
+
+/* --- Fonts --- */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Cinzel:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap');
+
+/* --- Reset & Base --- */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #0a0e27;
+    font-family: 'Rajdhani', sans-serif;
+    color: #fff;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* --- Game Canvas --- */
+#gameCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    z-index: 1;
+}
+
+/* ============================================
+   OVERLAY SYSTEM (All Screens)
+   ============================================ */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    background: rgba(5, 8, 30, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    animation: overlayFadeIn 0.5s ease forwards;
+}
+
+.overlay.active {
+    display: flex;
+}
+
+@keyframes overlayFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* --- Overlay Container --- */
+.overlay-container {
+    width: 90%;
+    max-width: 520px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 30px 25px;
+    background: linear-gradient(145deg, rgba(10, 14, 48, 0.95), rgba(20, 8, 60, 0.95));
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    border-radius: 24px;
+    box-shadow:
+        0 0 60px rgba(100, 50, 255, 0.15),
+        0 0 120px rgba(255, 215, 0, 0.05),
+        inset 0 1px 0 rgba(255, 215, 0, 0.1);
+    text-align: center;
+    position: relative;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,215,0,0.3) transparent;
+}
+
+.overlay-container::-webkit-scrollbar {
+    width: 4px;
+}
+.overlay-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+.overlay-container::-webkit-scrollbar-thumb {
+    background: rgba(255,215,0,0.3);
+    border-radius: 4px;
+}
+
+/* --- Animated Background Particles --- */
+.overlay::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background:
+        radial-gradient(2px 2px at 20% 30%, rgba(255,215,0,0.6), transparent),
+        radial-gradient(2px 2px at 40% 70%, rgba(100,50,255,0.6), transparent),
+        radial-gradient(2px 2px at 60% 20%, rgba(255,215,0,0.4), transparent),
+        radial-gradient(2px 2px at 80% 80%, rgba(100,50,255,0.5), transparent),
+        radial-gradient(1px 1px at 10% 50%, rgba(255,255,255,0.5), transparent),
+        radial-gradient(1px 1px at 50% 10%, rgba(255,215,0,0.4), transparent),
+        radial-gradient(1px 1px at 70% 40%, rgba(100,50,255,0.4), transparent),
+        radial-gradient(1px 1px at 90% 60%, rgba(255,255,255,0.3), transparent);
+    background-size: 200px 200px;
+    animation: starDrift 20s linear infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+
+@keyframes starDrift {
+    from { transform: translateY(0); }
+    to { transform: translateY(-200px); }
+}
+
+.overlay-container > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* ============================================
+   TITLE & TYPOGRAPHY
+   ============================================ */
+.game-title {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(2rem, 8vw, 3.8rem);
+    font-weight: 900;
+    background: linear-gradient(180deg, #FFD700 0%, #FFA500 40%, #FFD700 70%, #FFF8DC 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: none;
+    filter: drop-shadow(0 0 30px rgba(255,215,0,0.4));
+    letter-spacing: 4px;
+    line-height: 1.1;
+    margin-bottom: 6px;
+}
+
+.game-subtitle {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(0.8rem, 2.5vw, 1.1rem);
+    color: rgba(180, 180, 255, 0.9);
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    font-weight: 400;
+}
+
+.game-description {
+    font-size: clamp(0.85rem, 2vw, 1rem);
+    color: rgba(255,255,255,0.75);
+    line-height: 1.6;
+    margin-bottom: 20px;
+    padding: 0 5px;
+}
+
+/* --- Features Grid --- */
+.features-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin: 18px 0;
+    text-align: left;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: clamp(0.75rem, 1.8vw, 0.9rem);
+    color: rgba(255,255,255,0.85);
+    padding: 6px 10px;
+    background: rgba(255,215,0,0.06);
+    border-radius: 10px;
+    border: 1px solid rgba(255,215,0,0.08);
+}
+
+.feature-item .icon {
+    font-size: 1.1rem;
+}
+
+/* --- Divider --- */
+.divider {
+    width: 80%;
+    height: 1px;
+    margin: 16px auto;
+    background: linear-gradient(90deg, transparent, rgba(255,215,0,0.4), transparent);
+}
+
+/* --- Info Rows --- */
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 10px;
+    font-size: clamp(0.8rem, 1.8vw, 0.9rem);
+    color: rgba(255,255,255,0.7);
+}
+
+.info-row .label {
+    font-family: 'Cinzel', serif;
+    color: rgba(255,215,0,0.6);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.75rem;
+}
+
+.info-row .value {
+    color: rgba(255,255,255,0.9);
+    font-weight: 600;
+}
+
+/* ============================================
+   BUTTONS
+   ============================================ */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 40px;
+    border: none;
+    border-radius: 16px;
+    font-family: 'Orbitron', monospace;
+    font-weight: 700;
+    font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #fff;
+    background: linear-gradient(135deg, #FFD700, #FF8C00);
+    box-shadow:
+        0 4px 25px rgba(255,215,0,0.3),
+        0 0 60px rgba(255,215,0,0.1),
+        inset 0 1px 0 rgba(255,255,255,0.3);
+    text-decoration: none;
+    min-width: 200px;
+}
+
+.btn::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.btn:hover::after {
+    opacity: 1;
+}
+
+.btn:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow:
+        0 8px 40px rgba(255,215,0,0.4),
+        0 0 80px rgba(255,215,0,0.15);
+}
+
+.btn:active {
+    transform: translateY(0) scale(0.98);
+}
+
+.btn-sm {
+    padding: 10px 24px;
+    font-size: clamp(0.7rem, 1.8vw, 0.85rem);
+    min-width: 100px;
+    border-radius: 12px;
+}
+
+.btn-purple {
+    background: linear-gradient(135deg, #8B5CF6, #6D28D9);
+    box-shadow: 0 4px 25px rgba(139,92,246,0.3), 0 0 60px rgba(139,92,246,0.1);
+}
+
+.btn-purple:hover {
+    box-shadow: 0 8px 40px rgba(139,92,246,0.4), 0 0 80px rgba(139,92,246,0.15);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #EF4444, #B91C1C);
+    box-shadow: 0 4px 25px rgba(239,68,68,0.3);
+}
+
+.btn-danger:hover {
+    box-shadow: 0 8px 40px rgba(239,68,68,0.4);
+}
+
+.btn-outline {
+    background: transparent;
+    border: 2px solid rgba(255,215,0,0.4);
+    box-shadow: none;
+    color: rgba(255,215,0,0.9);
+}
+
+.btn-outline:hover {
+    background: rgba(255,215,0,0.08);
+    border-color: rgba(255,215,0,0.7);
+    box-shadow: 0 4px 25px rgba(255,215,0,0.15);
+}
+
+.btn-group {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 15px 0;
+}
+
+/* ============================================
+   SCREEN SPECIFICS
+   ============================================ */
+
+/* --- Lightning Header --- */
+.lightning-header {
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #FFD700, #8B5CF6, #FFD700, transparent);
+    margin-bottom: 15px;
+    border-radius: 2px;
+    animation: lightningPulse 2s ease-in-out infinite;
+}
+
+@keyframes lightningPulse {
+    0%, 100% { opacity: 0.5; transform: scaleX(0.95); }
+    50% { opacity: 1; transform: scaleX(1.05); }
+}
+
+/* --- Game Over Screen --- */
+.game-over-icon {
+    font-size: 4rem;
+    margin-bottom: 10px;
+    animation: gameOverPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes gameOverPulse {
+    0%, 100% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.1); opacity: 1; }
+}
+
+/* --- Victory Screen --- */
+.victory-icon {
+    font-size: 4rem;
+    margin-bottom: 10px;
+    animation: victorySpin 2s ease-in-out infinite;
+}
+
+@keyframes victorySpin {
+    0% { transform: rotateY(0deg) scale(1); }
+    50% { transform: rotateY(180deg) scale(1.1); }
+    100% { transform: rotateY(360deg) scale(1); }
+}
+
+/* --- Boss Warning --- */
+.boss-warning {
+    color: #EF4444;
+    font-family: 'Orbitron', monospace;
+    font-weight: 900;
+    font-size: clamp(1rem, 4vw, 1.6rem);
+    animation: bossWarning 0.8s ease-in-out infinite alternate;
+    text-shadow: 0 0 40px rgba(239,68,68,0.6);
+}
+
+@keyframes bossWarning {
+    from { transform: scale(1); opacity: 0.7; }
+    to { transform: scale(1.05); opacity: 1; }
+}
+
+.boss-name {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1.5rem, 5vw, 2.5rem);
+    color: #FFD700;
+    text-shadow: 0 0 40px rgba(255,215,0,0.5);
+    margin: 10px 0;
+}
+
+/* --- Stats Display --- */
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.stat-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,215,0,0.1);
+    border-radius: 14px;
+    padding: 12px;
+}
+
+.stat-card .stat-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: rgba(255,215,0,0.5);
+    font-family: 'Cinzel', serif;
+}
+
+.stat-card .stat-value {
+    font-size: clamp(1.2rem, 3vw, 1.8rem);
+    font-weight: 700;
+    font-family: 'Orbitron', monospace;
+    color: #FFD700;
+}
+
+/* --- End Story Screen --- */
+.end-story-text {
+    font-size: clamp(0.85rem, 2vw, 1rem);
+    line-height: 1.8;
+    color: rgba(255,255,255,0.85);
+    margin: 15px 0;
+    text-align: left;
+    padding: 0 5px;
+}
+
+.end-story-text .highlight {
+    color: #FFD700;
+    font-weight: 600;
+}
+
+.end-story-text .blessing {
+    display: block;
+    margin-top: 15px;
+    font-family: 'Cinzel', serif;
+    font-style: italic;
+    color: rgba(255,215,0,0.8);
+    text-align: center;
+    font-size: 1.1rem;
+}
+
+/* --- Pause Menu --- */
+.pause-title {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(1.5rem, 5vw, 2.5rem);
+    font-weight: 900;
+    color: #FFD700;
+    margin-bottom: 5px;
+    text-shadow: 0 0 30px rgba(255,215,0,0.3);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 480px) {
+    .overlay-container {
+        padding: 20px 16px;
+        border-radius: 18px;
+        width: 95%;
+    }
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+    .btn {
+        padding: 12px 28px;
+        min-width: 140px;
+    }
+    .stats-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+    }
+}
+
+@media (max-height: 600px) and (orientation: landscape) {
+    .overlay-container {
+        max-height: 85vh;
+        padding: 15px 20px;
+    }
+    .game-title {
+        font-size: clamp(1.5rem, 5vw, 2.2rem);
+    }
+    .features-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 4px;
+        margin: 10px 0;
+    }
+    .feature-item {
+        padding: 3px 8px;
+        font-size: 0.7rem;
+    }
+    .btn {
+        padding: 10px 24px;
+        min-width: 120px;
+        font-size: 0.75rem;
+    }
+    .info-row {
+        padding: 2px 8px;
+        font-size: 0.7rem;
+    }
+    .divider {
+        margin: 8px auto;
+    }
+}
+
+/* ============================================
+   SCROLLBAR HIDE FOR CONTAINERS
+   ============================================ */
+.overlay-container::-webkit-scrollbar {
+    width: 3px;
+}
+.overlay-container::-webkit-scrollbar-thumb {
+    background: rgba(255,215,0,0.2);
+    border-radius: 10px;
+}
+
+/* --- Loading Spinner (fallback) --- */
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255,215,0,0.1);
+    border-top-color: #FFD700;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 20px auto;
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================
+     GAME CANVAS
+     ============================================ -->
+<canvas id="gameCanvas"></canvas>
+
+<!-- ============================================
+     WELCOME SCREEN
+     ============================================ -->
+<div id="welcomeScreen" class="overlay active">
+    <div class="overlay-container">
+        <div class="lightning-header"></div>
+        <div class="game-title">ZEUS DASH</div>
+        <div class="game-subtitle">⚡ Run with the power of lightning. ⚡</div>
+        <div class="divider"></div>
+        <div class="game-description">
+            Take control of <strong style="color:#FFD700;">Young Zeus</strong> as he runs through the ancient world, dodging obstacles, collecting lightning energy, and defeating legendary enemies.
+        </div>
+        <div class="features-grid">
+            <div class="feature-item"><span class="icon">⚡</span> Endless Runner</div>
+            <div class="feature-item"><span class="icon">⚡</span> Zeus Powers</div>
+            <div class="feature-item"><span class="icon">⚡</span> Lightning Dash</div>
+            <div class="feature-item"><span class="icon">⚡</span> Shield Ability</div>
+            <div class="feature-item"><span class="icon">⚡</span> Thunder Strike</div>
+            <div class="feature-item"><span class="icon">⚡</span> Boss Battles</div>
+            <div class="feature-item"><span class="icon">⚡</span> High Score System</div>
+        </div>
+        <div class="divider"></div>
+        <div class="info-row"><span class="label">Game Owner</span><span class="value">ZEUS</span></div>
+        <div class="info-row"><span class="label">Co-Owner</span><span class="value">Danny</span></div>
+        <div class="info-row"><span class="label">Owner Contact</span><span class="value">09066760078</span></div>
+        <div class="info-row"><span class="label">Co-Owner Contact</span><span class="value">08062285862</span></div>
+        <div class="info-row"><span class="label">Version</span><span class="value">1.0</span></div>
+        <div class="info-row"><span class="label">Copyright</span><span class="value">© Zeus Dash</span></div>
+        <div class="divider"></div>
+        <button id="getStartedBtn" class="btn" onclick="startGame()">
+            ⚡ GET STARTED
+        </button>
+        <div class="divider" style="margin-top:12px;margin-bottom:4px;"></div>
+        <div style="font-size:0.6rem;color:rgba(255,255,255,0.2);letter-spacing:1px;">PRESS ENTER OR TAP TO PLAY</div>
+    </div>
+</div>
+
+<!-- ============================================
+     PAUSE SCREEN
+     ============================================ -->
+<div id="pauseScreen" class="overlay">
+    <div class="overlay-container">
+        <div class="lightning-header"></div>
+        <div class="pause-title">⏸ PAUSED</div>
+        <div class="divider"></div>
+        <div class="btn-group">
+            <button class="btn" onclick="resumeGame()">▶ RESUME</button>
+        </div>
+        <div class="btn-group">
+            <button class="btn btn-outline btn-sm" onclick="restartGame()">🔄 RESTART</button>
+            <button class="btn btn-danger btn-sm" onclick="quitToMenu()">✕ QUIT</button>
+        </div>
+        <div class="divider"></div>
+        <div style="font-size:0.7rem;color:rgba(255,255,255,0.3);">PRESS ESC OR P TO RESUME</div>
+    </div>
+</div>
+
+<!-- ============================================
+     GAME OVER SCREEN
+     ============================================ -->
+<div id="gameOverScreen" class="overlay">
+    <div class="overlay-container">
+        <div class="game-over-icon">💀</div>
+        <div class="game-title" style="font-size:clamp(1.8rem,6vw,2.8rem);">GAME OVER</div>
+        <div class="divider"></div>
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-label">Score</div><div class="stat-value" id="goScore">0</div></div>
+            <div class="stat-card"><div class="stat-label">Distance</div><div class="stat-value" id="goDistance">0m</div></div>
+            <div class="stat-card"><div class="stat-label">Coins</div><div class="stat-value" id="goCoins">0</div></div>
+            <div class="stat-card"><div class="stat-label">High Score</div><div class="stat-value" id="goHighScore">0</div></div>
+        </div>
+        <div class="divider"></div>
+        <div class="btn-group">
+            <button class="btn" onclick="restartGame()">🔄 PLAY AGAIN</button>
+        </div>
+        <div class="btn-group">
+            <button class="btn btn-outline btn-sm" onclick="quitToMenu()">🏠 MENU</button>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================
+     VICTORY SCREEN
+     ============================================ -->
+<div id="victoryScreen" class="overlay">
+    <div class="overlay-container">
+        <div class="victory-icon">🏆</div>
+        <div class="game-title" style="font-size:clamp(1.5rem,5vw,2.5rem);">VICTORY!</div>
+        <div class="game-subtitle">Boss Defeated!</div>
+        <div class="divider"></div>
+        <div id="victoryBossName" style="font-family:'Cinzel',serif;font-size:1.3rem;color:#FFD700;margin:8px 0;"></div>
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-label">Score</div><div class="stat-value" id="vScore">0</div></div>
+            <div class="stat-card"><div class="stat-label">Coins</div><div class="stat-value" id="vCoins">0</div></div>
+        </div>
+        <div class="divider"></div>
+        <div class="btn-group">
+            <button class="btn" onclick="continueAfterVictory()">▶ CONTINUE</button>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================
+     BOSS WARNING SCREEN
+     ============================================ -->
+<div id="bossWarningScreen" class="overlay">
+    <div class="overlay-container">
+        <div class="lightning-header"></div>
+        <div class="boss-warning">⚠️ BOSS APPROACHING ⚠️</div>
+        <div id="bossWarningName" class="boss-name">???</div>
+        <div style="font-size:1.5rem;margin:10px 0;">👹</div>
+        <div style="color:rgba(255,255,255,0.5);font-size:0.85rem;">Prepare for battle!</div>
+        <div class="divider"></div>
+        <div style="font-size:0.7rem;color:rgba(255,255,255,0.3);" id="bossWarningCountdown">Battle in 3...</div>
+    </div>
+</div>
+
+<!-- ============================================
+     END STORY SCREEN (100K points)
+     ============================================ -->
+<div id="endStoryScreen" class="overlay">
+    <div class="overlay-container">
+        <div class="victory-icon" style="animation-duration:3s;">✨</div>
+        <div class="game-title" style="font-size:clamp(1.5rem,5vw,2.5rem);">THE END</div>
+        <div class="lightning-header"></div>
+        <div class="end-story-text">
+            <strong style="color:#FFD700;font-size:1.2rem;">Congratulations!</strong><br><br>
+            You have completed <strong style="color:#FFD700;">Zeus Dash</strong>.<br><br>
+            You have conquered every challenge and proven yourself worthy of the power of <strong style="color:#FFD700;">Zeus</strong>.<br><br>
+            Thank you for playing.<br><br>
+            The owner of this game wishes you <strong style="color:#FFD700;">success, happiness, strength, and victory</strong> in everything you do.<br><br>
+            <em>Never stop believing in yourself.</em><br><br>
+            <span class="blessing">
+                Stay strong.<br>
+                Stay fearless.<br>
+                Stay blessed.<br>
+                — <strong>ZEUS</strong>
+            </span>
+        </div>
+        <div class="divider"></div>
+        <div class="info-row"><span class="label">Game Owner</span><span class="value">ZEUS</span></div>
+        <div class="info-row"><span class="label">Owner Contact</span><span class="value">09066760078</span></div>
+        <div class="info-row"><span class="label">Co-Owner</span><span class="value">Danny</span></div>
+        <div class="info-row"><span class="label">Co-Owner Contact</span><span class="value">08062285862</span></div>
+        <div class="divider"></div>
+        <div style="color:rgba(255,255,255,0.4);font-size:0.85rem;margin-bottom:15px;">Thank you for playing Zeus Dash.</div>
+        <button class="btn btn-outline btn-sm" onclick="quitToMenu()">🏠 MAIN MENU</button>
+    </div>
+</div>
+
+<!-- ============================================
+     HUD (In-Game UI drawn via Canvas, but HTML elements for accessibility)
+     ============================================ -->
+<!-- The HUD is rendered entirely on canvas for consistency -->
+
+<!-- ============================================
+     JAVASCRIPT - Full Game Engine
+     ============================================ -->
+<script>
+// ============================================
+// ZEUS DASH - Full Game Engine
+// HTML5 Canvas 2.5D Endless Runner
+// ============================================
+
+'use strict';
+
+// ============================================
+// 1. CONSTANTS & CONFIGURATION
+// ============================================
+const CONFIG = {
+    // Physics
+    GRAVITY: 0.6,
+    JUMP_FORCE: -12,
+    DOUBLE_JUMP_FORCE: -10,
+    BASE_SPEED: 5,
+    MAX_SPEED: 14,
+    SPEED_INCREMENT: 0.0003,
+    LANE_COUNT: 5,
+    LANE_WIDTH: 120,
+    GROUND_Y: 0.78, // percentage of canvas height
+
+    // Player
+    PLAYER_WIDTH: 40,
+    PLAYER_HEIGHT: 60,
+    PLAYER_DEPTH: 30,
+    INITIAL_LIVES: 3,
+    INITIAL_HEALTH: 100,
+
+    // Scoring
+    SCORE_PER_DISTANCE: 1,
+    COIN_SCORE: 50,
+    BOSS_SCORE_BASE: 500,
+    WIN_SCORE: 100000,
+
+    // Boss milestones
+    BOSS_MILESTONES: [2000, 5000, 10000, 18000, 28000, 40000, 55000, 72000, 88000, 95000],
+
+    // Power meter
+    POWER_MAX: 100,
+    POWER_GAIN_RATE: 0.05,
+    POWER_DRAIN_DASH: 30,
+    POWER_DRAIN_SHIELD: 0.2,
+    POWER_DRAIN_STRIKE: 40,
+
+    // Coins
+    COIN_RADIUS: 12,
+    COIN_VALUE: 10,
+
+    // Rendering
+    FPS: 60,
+    SKY_COLOR_TOP: '#0a0e27',
+    SKY_COLOR_BOTTOM: '#1a1040',
+    GROUND_COLOR: '#2a1a0a',
+    ROAD_COLOR: '#3a2a1a',
+};
+
+// Boss definitions
+const BOSSES = [
+    { name: 'Medusa', health: 15, speed: 1.5, color: '#22c55e', icon: '🐍' },
+    { name: 'Minotaur', health: 25, speed: 2.0, color: '#f59e0b', icon: '🐂' },
+    { name: 'Hydra', health: 40, speed: 1.8, color: '#10b981', icon: '🐉' },
+    { name: 'Cerberus', health: 50, speed: 2.2, color: '#ef4444', icon: '🐕' },
+    { name: 'Cyclops', health: 65, speed: 1.5, color: '#8b5cf6', icon: '👁️' },
+    { name: 'Titan Brontes', health: 80, speed: 1.2, color: '#f97316', icon: '🗿' },
+    { name: 'Typhon', health: 100, speed: 1.6, color: '#ec4899', icon: '🌪️' },
+    { name: 'Kronos', health: 120, speed: 1.4, color: '#a855f7', icon: '⏳' },
+    { name: 'Ares', health: 150, speed: 2.5, color: '#dc2626', icon: '⚔️' },
+    { name: 'Daniel T', health: 200, speed: 3.0, color: '#fbbf24', icon: '👑' },
+];
+
+// ============================================
+// 2. UTILITY FUNCTIONS
+// ============================================
+const Utils = {
+    rand(min, max) { return Math.random() * (max - min) + min; },
+    randInt(min, max) { return Math.floor(Utils.rand(min, max + 1)); },
+    clamp(val, min, max) { return Math.max(min, Math.min(max, val)); },
+    lerp(a, b, t) { return a + (b - a) * t; },
+    dist(x1, y1, x2, y2) { return Math.hypot(x2 - x1, y2 - y1); },
+    rectCollide(a, b) {
+        return a.x < b.x + b.w && a.x + a.w > b.x &&
+               a.y < b.y + b.h && a.y + a.h > b.y;
+    },
+    circRectCollide(cx, cy, cr, rx, ry, rw, rh) {
+        const nearX = Utils.clamp(cx, rx, rx + rw);
+        const nearY = Utils.clamp(cy, ry, ry + rh);
+        return Utils.dist(cx, cy, nearX, nearY) < cr;
+    }
+};
+
+// ============================================
+// 3. AUDIO MANAGER (Simple Web Audio)
+// ============================================
+class AudioManager {
+    constructor() {
+        this.ctx = null;
+        this.enabled = true;
+        this.musicGain = null;
+        this.sfxGain = null;
+        this.initialized = false;
+    }
+
+    init() {
+        if (this.initialized) return;
+        try {
+            this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+            this.musicGain = this.ctx.createGain();
+            this.musicGain.gain.value = 0.3;
+            this.musicGain.connect(this.ctx.destination);
+            this.sfxGain = this.ctx.createGain();
+            this.sfxGain.gain.value = 0.5;
+            this.sfxGain.connect(this.ctx.destination);
+            this.initialized = true;
+        } catch (e) {
+            console.warn('Audio not available:', e);
+            this.enabled = false;
+        }
+    }
+
+    playTone(freq, duration, type = 'sine', gainNode = null) {
+        if (!this.enabled || !this.ctx) return;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = type;
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(gainNode || this.sfxGain);
+        osc.start();
+        osc.stop(this.ctx.currentTime + duration);
+    }
+
+    playJump() { this.playTone(400, 0.1, 'square'); }
+    playDoubleJump() { this.playTone(600, 0.15, 'square'); }
+    playCoin() { this.playTone(880, 0.08, 'sine'); }
+    playHit() { this.playTone(150, 0.2, 'sawtooth'); }
+    playDash() { this.playTone(200, 0.3, 'sawtooth'); setTimeout(() => this.playTone(400, 0.2, 'sine'), 100); }
+    playShield() { this.playTone(500, 0.2, 'sine'); setTimeout(() => this.playTone(700, 0.2, 'sine'), 100); }
+    playStrike() { this.playTone(100, 0.4, 'sawtooth'); setTimeout(() => this.playTone(800, 0.3, 'square'), 150); }
+    playBossWarning() { this.playTone(300, 0.15, 'square'); setTimeout(() => this.playTone(200, 0.2, 'square'), 200); }
+    playVictory() {
+        [523, 659, 784, 1047].forEach((f, i) => {
+            setTimeout(() => this.playTone(f, 0.2, 'sine'), i * 150);
+        });
+    }
+    playGameOver() {
+        [400, 350, 300, 200].forEach((f, i) => {
+            setTimeout(() => this.playTone(f, 0.3, 'sawtooth'), i * 200);
+        });
+    }
+}
+
+// ============================================
+// 4. PARTICLE SYSTEM
+// ============================================
+class Particle {
+    constructor(x, y, vx, vy, life, color, size) {
+        this.x = x;
+        this.y = y;
+        this.vx = vx;
+        this.vy = vy;
+        this.life = life;
+        this.maxLife = life;
+        this.color = color;
+        this.size = size || 4;
+    }
+    update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.vy += 0.05;
+        this.life--;
+        this.size *= 0.98;
+    }
+    get alpha() { return this.life / this.maxLife; }
+    get dead() { return this.life <= 0 || this.size < 0.5; }
+}
+
+class ParticleSystem {
+    constructor() {
+        this.particles = [];
+    }
+    emit(x, y, count, color, speed, life, size) {
+        for (let i = 0; i < count; i++) {
+            const angle = Utils.rand(0, Math.PI * 2);
+            const spd = Utils.rand(speed * 0.5, speed);
+            this.particles.push(new Particle(
+                x + Utils.rand(-10, 10),
+                y + Utils.rand(-10, 10),
+                Math.cos(angle) * spd,
+                Math.sin(angle) * spd - 1,
+                Utils.randInt(life * 0.5, life),
+                color,
+                Utils.rand(size * 0.5, size)
+            ));
+        }
+    }
+    update() {
+        this.particles.forEach(p => p.update());
+        this.particles = this.particles.filter(p => !p.dead);
+    }
+    draw(ctx, camX, camY) {
+        this.particles.forEach(p => {
+            ctx.globalAlpha = p.alpha;
+            ctx.fillStyle = p.color;
+            ctx.beginPath();
+            ctx.arc(p.x - camX, p.y - camY, p.size, 0, Math.PI * 2);
+            ctx.fill();
+        });
+        ctx.globalAlpha = 1;
+    }
+    clear() { this.particles = []; }
+}
+
+// ============================================
+// 5. GAME STATE
+// ============================================
+const GameState = {
+    // Screens
+    currentScreen: 'welcome', // welcome | playing | paused | gameover | victory | bosswarning | endstory
+
+    // Player
+    player: {
+        x: 0,
+        y: 0,
+        z: 0,       // depth position along the road
+        width: CONFIG.PLAYER_WIDTH,
+        height: CONFIG.PLAYER_HEIGHT,
+        depth: CONFIG.PLAYER_DEPTH,
+        vy: 0,
+        lane: 2,    // 0-4
+        targetLane: 2,
+        jumping: false,
+        doubleJumped: false,
+        canDoubleJump: true,
+        sliding: false,
+        slideTimer: 0,
+        grounded: true,
+        health: CONFIG.INITIAL_HEALTH,
+        maxHealth: CONFIG.INITIAL_HEALTH,
+        lives: CONFIG.INITIAL_LIVES,
+        invincible: 0,
+        shieldActive: false,
+        shieldTimer: 0,
+        dashing: false,
+        dashTimer: 0,
+        speedMultiplier: 1.0,
+        scale: 1.0,
+        rotation: 0,
+        animFrame: 0,
+        animTimer: 0,
+    },
+
+    // World
+    world: {
+        speed: CONFIG.BASE_SPEED,
+        distance: 0,
+        scrollOffset: 0,
+        time: 0,
+    },
+
+    // Scoring
+    score: 0,
+    coins: 0,
+    highScore: parseInt(localStorage.getItem('zeusDashHighScore') || '0'),
+    combo: 0,
+
+    // Power
+    power: 50,
+    maxPower: CONFIG.POWER_MAX,
+
+    // Obstacles
+    obstacles: [],
+    obstacleSpawnTimer: 0,
+    obstacleSpawnInterval: 60,
+
+    // Coins in world
+    coinObjects: [],
+    coinSpawnTimer: 0,
+    coinSpawnInterval: 40,
+
+    // Boss
+    boss: null,
+    bossActive: false,
+    bossIndex: -1,
+    bossDefeated: false,
+    bossHealth: 0,
+    bossMaxHealth: 0,
+    bossAttackTimer: 0,
+    bossWarningTimer: 0,
+    bossProjectiles: [],
+
+    // Power-ups
+    powerups: [],
+
+    // Effects
+    particles: new ParticleSystem(),
+    screenShake: 0,
+    lightningFlash: 0,
+    flashColor: '#fff',
+
+    // Background
+    clouds: [],
+    bgTime: 0,
+
+    // Controls
+    keys: {},
+    touch: {
+        startX: 0,
+        startY: 0,
+        swiping: false,
+        lastTap: 0,
+    },
+
+    // Audio
+    audio: new AudioManager(),
+};
+
+// ============================================
+// 6. RENDERER
+// ============================================
+class Renderer {
+    constructor(canvas) {
+        this.canvas = canvas;
+        this.ctx = canvas.getContext('2d');
+        this.width = 0;
+        this.height = 0;
+        this.groundY = 0;
+        this.lanePositions = [];
+        this.resize();
+        this.clouds = [];
+        this.initClouds();
+    }
+
+    resize() {
+        this.width = window.innerWidth;
+        this.height = window.innerHeight;
+        this.canvas.width = this.width;
+        this.canvas.height = this.height;
+        this.groundY = this.height * CONFIG.GROUND_Y;
+        // Calculate lane positions
+        const center = this.width / 2;
+        this.lanePositions = [];
+        for (let i = 0; i < CONFIG.LANE_COUNT; i++) {
+            this.lanePositions.push(center + (i - (CONFIG.LANE_COUNT - 1) / 2) * CONFIG.LANE_WIDTH);
+        }
+    }
+
+    initClouds() {
+        this.clouds = [];
+        for (let i = 0; i < 12; i++) {
+            this.clouds.push({
+                x: Utils.rand(0, this.width),
+                y: Utils.rand(0, this.height * 0.4),
+                w: Utils.rand(80, 200),
+                h: Utils.rand(30, 60),
+                speed: Utils.rand(0.1, 0.4),
+                opacity: Utils.rand(0.1, 0.3),
+            });
+        }
+    }
+
+    // --- Drawing Primitives ---
+    drawSky(time) {
+        const ctx = this.ctx;
+        const grad = ctx.createLinearGradient(0, 0, 0, this.groundY);
+        const timeFactor = Math.sin(time * 0.005) * 0.05;
+        grad.addColorStop(0, `rgb(${10 + timeFactor * 20}, ${14 + timeFactor * 10}, ${39 + timeFactor * 20})`);
+        grad.addColorStop(0.5, `rgb(${26 + timeFactor * 20}, ${16 + timeFactor * 10}, ${64 + timeFactor * 20})`);
+        grad.addColorStop(1, `rgb(${42 + timeFactor * 20}, ${26 + timeFactor * 10}, ${85 + timeFactor * 20})`);
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, this.width, this.groundY);
+
+        // Stars
+        ctx.fillStyle = 'rgba(255,255,255,0.3)';
+        const seed = 12345;
+        for (let i = 0; i < 50; i++) {
+            const sx = ((i * 137.5 + seed) % this.width);
+            const sy = ((i * 89.3 + seed * 2) % (this.groundY * 0.6));
+            const size = ((i * 7 + seed) % 3) + 1;
+            const twinkle = Math.sin(time * 0.02 + i) * 0.5 + 0.5;
+            ctx.globalAlpha = twinkle * 0.4;
+            ctx.fillRect(sx, sy, size, size);
+        }
+        ctx.globalAlpha = 1;
+    }
+
+    drawClouds(time) {
+        const ctx = this.ctx;
+        this.clouds.forEach(c => {
+            c.x += c.speed;
+            if (c.x > this.width + c.w) { c.x = -c.w; c.y = Utils.rand(0, this.height * 0.35); }
+            ctx.globalAlpha = c.opacity * (Math.sin(time * 0.003 + c.x * 0.01) * 0.3 + 0.7);
+            ctx.fillStyle = 'rgba(255,255,255,0.8)';
+            // Draw fluffy cloud
+            ctx.beginPath();
+            ctx.ellipse(c.x, c.y, c.w * 0.5, c.h * 0.4, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(c.x - c.w * 0.3, c.y + c.h * 0.1, c.w * 0.35, c.h * 0.35, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(c.x + c.w * 0.3, c.y + c.h * 0.05, c.w * 0.3, c.h * 0.3, 0, 0, Math.PI * 2);
+            ctx.fill();
+        });
+        ctx.globalAlpha = 1;
+    }
+
+    drawGround(time) {
+        const ctx = this.ctx;
+
+        // Main ground
+        const grad = ctx.createLinearGradient(0, this.groundY, 0, this.height);
+        grad.addColorStop(0, '#3a2a1a');
+        grad.addColorStop(0.3, '#2a1a0a');
+        grad.addColorStop(1, '#1a0a00');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, this.groundY, this.width, this.height - this.groundY);
+
+        // Road lines with perspective
+        const scroll = time * 0.5;
+        ctx.strokeStyle = 'rgba(255,215,0,0.15)';
+        ctx.lineWidth = 2;
+        for (let i = -5; i < 15; i++) {
+            const y = this.groundY + ((i * 40 - scroll % 40) % (this.height - this.groundY));
+            if (y < this.groundY || y > this.height) continue;
+            const perspective = 1 - (y - this.groundY) / (this.height - this.groundY);
+            const laneW = CONFIG.LANE_WIDTH * (0.3 + perspective * 0.7);
+            ctx.globalAlpha = 0.1 + perspective * 0.2;
+            for (let l = 0; l < CONFIG.LANE_COUNT; l++) {
+                const cx = this.lanePositions[l];
+                const x1 = cx - laneW * 0.45;
+                const x2 = cx + laneW * 0.45;
+                ctx.beginPath();
+                ctx.moveTo(x1, y);
+                ctx.lineTo(x2, y);
+                ctx.stroke();
+            }
+        }
+        ctx.globalAlpha = 1;
+
+        // Side columns / temple pillars
+        ctx.fillStyle = 'rgba(180,150,100,0.08)';
+        for (let i = 0; i < 8; i++) {
+            const px = ((i * 200 - scroll % 1600 + 1600) % 1600) - 200;
+            const ph = 80 + Math.sin(i * 3) * 20;
+            ctx.fillRect(px, this.groundY - ph, 30, ph);
+            ctx.fillRect(this.width - px - 30, this.groundY - ph, 30, ph);
+        }
+
+        // Temple mountains in background
+        ctx.fillStyle = 'rgba(40,20,60,0.15)';
+        for (let i = 0; i < 5; i++) {
+            const mx = ((i * 300 - scroll * 0.1 % 1500 + 1500) % 1500) - 200;
+            const mh = 100 + Math.sin(i * 2.5) * 50;
+            ctx.beginPath();
+            ctx.moveTo(mx - 80, this.groundY);
+            ctx.lineTo(mx, this.groundY - mh);
+            ctx.lineTo(mx + 80, this.groundY);
+            ctx.fill();
+        }
+    }
+
+    drawLightningFlash(time) {
+        if (GameState.lightningFlash > 0) {
+            const ctx = this.ctx;
+            ctx.fillStyle = `rgba(255,255,255,${GameState.lightningFlash * 0.3})`;
+            ctx.fillRect(0, 0, this.width, this.height);
+
+            // Lightning bolt
+            if (GameState.lightningFlash > 0.5) {
+                ctx.strokeStyle = `rgba(255,255,200,${GameState.lightningFlash * 0.5})`;
+                ctx.lineWidth = 3 + GameState.lightningFlash * 5;
+                ctx.shadowBlur = 30;
+                ctx.shadowColor = '#FFD700';
+                const lx = Utils.rand(this.width * 0.2, this.width * 0.8);
+                let ly = 0;
+                ctx.beginPath();
+                ctx.moveTo(lx, ly);
+                for (let i = 0; i < 8; i++) {
+                    ly += Utils.rand(30, 80);
+                    ctx.lineTo(lx + Utils.rand(-60, 60), ly);
+                }
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+            }
+        }
+    }
+
+    drawHUD() {
+        const ctx = this.ctx;
+        const G = GameState;
+        const p = G.player;
+        const pad = 15;
+
+        // --- Score ---
+        ctx.fillStyle = 'rgba(0,0,0,0.4)';
+        ctx.roundRect(pad, pad, 200, 45, 12);
+        ctx.fill();
+
+        ctx.font = 'bold 14px Orbitron, monospace';
+        ctx.fillStyle = '#FFD700';
+        ctx.textAlign = 'left';
+        ctx.fillText(`⚡ SCORE`, pad + 12, pad + 18);
+        ctx.font = 'bold 20px Orbitron, monospace';
+        ctx.fillStyle = '#fff';
+        ctx.fillText(`${Math.floor(G.score)}`, pad + 12, pad + 40);
+
+        // --- Coins ---
+        ctx.fillStyle = 'rgba(0,0,0,0.4)';
+        ctx.roundRect(pad + 215, pad, 120, 45, 12);
+        ctx.fill();
+        ctx.font = 'bold 14px Orbitron, monospace';
+        ctx.fillStyle = '#FFD700';
+        ctx.textAlign = 'left';
+        ctx.fillText(`🪙  ${G.coins}`, pad + 227, pad + 30);
+
+        // --- Distance ---
+        ctx.fillStyle = 'rgba(0,0,0,0.4)';
+        ctx.roundRect(this.width - pad - 160, pad, 160, 45, 12);
+        ctx.fill();
+        ctx.font = '14px Orbitron, monospace';
+        ctx.fillStyle = 'rgba(255,255,255,0.6)';
+        ctx.textAlign = 'right';
+        ctx.fillText(`DISTANCE`, this.width - pad - 12, pad + 18);
+        ctx.font = 'bold 18px Orbitron, monospace';
+        ctx.fillStyle = '#fff';
+        ctx.fillText(`${Math.floor(G.world.distance)}m`, this.width - pad - 12, pad + 40);
+
+        // --- Lives ---
+        ctx.textAlign = 'left';
+        for (let i = 0; i < p.lives; i++) {
+            ctx.font = '24px serif';
+            ctx.fillText('⚡', pad + i * 30, this.height - pad - 10);
+        }
+
+        // --- Health Bar ---
+        const hbX = pad;
+        const hbY = this.height - pad - 40;
+        const hbW = 200;
+        const hbH = 16;
+        ctx.fillStyle = 'rgba(0,0,0,0.5)';
+        ctx.roundRect(hbX, hbY, hbW, hbH, 8);
+        ctx.fill();
+        const healthPct = p.health / p.maxHealth;
+        const healthColor = healthPct > 0.5 ? '#22c55e' : healthPct > 0.25 ? '#f59e0b' : '#ef4444';
+        ctx.fillStyle = healthColor;
+        ctx.roundRect(hbX + 2, hbY + 2, (hbW - 4) * healthPct, hbH - 4, 6);
+        ctx.fill();
+        ctx.font = '10px Orbitron, monospace';
+        ctx.fillStyle = '#fff';
+        ctx.textAlign = 'center';
+        ctx.fillText(`HP ${Math.ceil(p.health)}/${p.maxHealth}`, hbX + hbW / 2, hbY + 12);
+
+        // --- Power Meter ---
+        const pmX = this.width - pad - 30;
+        const pmY = pad + 60;
+        const pmW = 22;
+        const pmH = 180;
+        ctx.fillStyle = 'rgba(0,0,0,0.4)';
+        ctx.roundRect(pmX, pmY, pmW, pmH, 10);
+        ctx.fill();
+        const powerPct = G.power / G.maxPower;
+        const powerGrad = ctx.createLinearGradient(pmX, pmY + pmH, pmX, pmY);
+        powerGrad.addColorStop(0, '#8B5CF6');
+        powerGrad.addColorStop(0.5, '#FFD700');
+        powerGrad.addColorStop(1, '#EF4444');
+        ctx.fillStyle = powerGrad;
+        ctx.roundRect(pmX + 3, pmY + pmH - 3 - (pmH - 6) * powerPct, pmW - 6, (pmH - 6) * powerPct, 6);
+        ctx.fill();
+
+        // Power text
+        ctx.save();
+        ctx.translate(pmX + pmW / 2, pmY - 15);
+        ctx.font = '9px Orbitron, monospace';
+        ctx.fillStyle = '#FFD700';
+        ctx.textAlign = 'center';
+        ctx.fillText('PWR', 0, 0);
+        ctx.restore();
+
+        // --- Speed indicator ---
+        if (G.world.speed > CONFIG.BASE_SPEED + 1) {
+            ctx.fillStyle = 'rgba(255,215,0,0.15)';
+            ctx.font = 'bold 12px Orbitron, monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText(`⚡ x${G.player.speedMultiplier.toFixed(1)} ⚡`, this.width / 2, 30);
+        }
+
+        // --- Abilities indicators ---
+        if (p.shieldActive) {
+            ctx.font = '18px serif';
+            ctx.textAlign = 'left';
+            ctx.fillText('🛡️', pad, this.height - pad - 90);
+        }
+        if (p.dashing) {
+            ctx.font = '18px serif';
+            ctx.textAlign = 'left';
+            ctx.fillText('💨', pad + 30, this.height - pad - 90);
+        }
+
+        // --- Boss Health Bar (if active) ---
+        if (G.bossActive && G.boss) {
+            const bbX = this.width / 2 - 150;
+            const bbY = 70;
+            const bbW = 300;
+            const bbH = 20;
+            ctx.fillStyle = 'rgba(0,0,0,0.6)';
+            ctx.roundRect(bbX - 4, bbY - 4, bbW + 8, bbH + 8, 12);
+            ctx.fill();
+
+            // Boss name
+            ctx.font = 'bold 14px Cinzel, serif';
+            ctx.fillStyle = G.boss.color || '#EF4444';
+            ctx.textAlign = 'center';
+            ctx.fillText(`👑 ${G.boss.name}`, this.width / 2, bbY - 8);
+
+            const bPct = G.bossHealth / G.bossMaxHealth;
+            ctx.fillStyle = 'rgba(255,255,255,0.1)';
+            ctx.roundRect(bbX, bbY, bbW, bbH, 8);
+            ctx.fill();
+            ctx.fillStyle = G.boss.color || '#EF4444';
+            ctx.roundRect(bbX + 2, bbY + 2, (bbW - 4) * bPct, bbH - 4, 6);
+            ctx.fill();
+            ctx.font = 'bold 12px Orbitron, monospace';
+            ctx.fillStyle = '#fff';
+            ctx.textAlign = 'center';
+            ctx.fillText(`${Math.ceil(G.bossHealth)}/${G.bossMaxHealth}`, this.width / 2, bbY + 15);
+        }
+
+        // --- Boss milestone indicator ---
+        if (!G.bossActive) {
+            const nextBoss = G.bossIndex + 1;
+            if (nextBoss < BOSSES.length) {
+                const milestone = CONFIG.BOSS_MILESTONES[nextBoss];
+                const progress = G.score / milestone;
+                if (progress > 0.5 && progress < 1) {
+                    const mbX = this.width / 2 - 60;
+                    const mbY = 60;
+                    ctx.fillStyle = 'rgba(239,68,68,0.1)';
+                    ctx.roundRect(mbX, mbY, 120, 20, 10);
+                    ctx.fill();
+                    ctx.fillStyle = 'rgba(239,68,68,0.5)';
+                    ctx.roundRect(mbX + 2, mbY + 2, 116 * (progress - 0.5) / 0.5, 16, 8);
+                    ctx.fill();
+                    ctx.font = '9px Orbitron, monospace';
+                    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(`BOSS ${Math.ceil((1 - progress) * 100)}%`, this.width / 2, mbY + 14);
+                }
+            }
+        }
+    }
+
+    drawPlayer() {
+        const ctx = this.ctx;
+        const G = GameState;
+        const p = G.player;
+        const x = this.lanePositions[p.lane];
+        const y = this.groundY - p.height - (p.jumping ? Math.abs(p.vy) * 3 : 0);
+        const scale = p.scale || 1;
+
+        ctx.save();
+        ctx.translate(x, y + p.height / 2);
+
+        // Invincibility blink
+        if (p.invincible > 0 && Math.floor(p.invincible / 3) % 2 === 0) {
+            ctx.globalAlpha = 0.5;
+        }
+
+        // Shadow
+        ctx.fillStyle = 'rgba(0,0,0,0.3)';
+        ctx.beginPath();
+        ctx.ellipse(0, p.height / 2 + 5, p.width * 0.6, p.width * 0.15, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Shield glow
+        if (p.shieldActive) {
+            ctx.shadowBlur = 40;
+            ctx.shadowColor = '#8B5CF6';
+            ctx.strokeStyle = 'rgba(139,92,246,0.3)';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(0, 0, p.width * 0.8 + Math.sin(G.world.time * 0.1) * 5, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+        }
+
+        // Dash effect
+        if (p.dashing) {
+            ctx.shadowBlur = 30;
+            ctx.shadowColor = '#FFD700';
+            for (let i = 1; i < 4; i++) {
+                ctx.globalAlpha = 0.2 / i;
+                ctx.fillStyle = '#FFD700';
+                ctx.beginPath();
+                ctx.arc(-i * 15, 0, p.width * 0.4, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.globalAlpha = 1;
+            ctx.shadowBlur = 0;
+        }
+
+        // --- Draw Young Zeus ---
+        ctx.translate(0, -p.height / 2);
+
+        // Body (tunic)
+        const bodyGrad = ctx.createLinearGradient(0, 0, 0, p.height);
+        bodyGrad.addColorStop(0, '#f0e6d3');
+        bodyGrad.addColorStop(0.3, '#e8dcc8');
+        bodyGrad.addColorStop(1, '#1a3a5c');
+        ctx.fillStyle = bodyGrad;
+        ctx.roundRect(-p.width * 0.35, p.height * 0.15, p.width * 0.7, p.height * 0.55, 8);
+        ctx.fill();
+
+        // Head
+        ctx.fillStyle = '#f0e6d3';
+        ctx.beginPath();
+        ctx.arc(0, p.height * 0.1, p.width * 0.3, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Hair
+        ctx.fillStyle = '#4a3728';
+        ctx.beginPath();
+        ctx.ellipse(0, p.height * 0.02, p.width * 0.32, p.width * 0.2, 0, Math.PI, Math.PI * 2);
+        ctx.fill();
+
+        // Eyes
+        ctx.fillStyle = '#4a90d9';
+        ctx.beginPath();
+        ctx.arc(-p.width * 0.12, p.height * 0.1, 3, 0, Math.PI * 2);
+        ctx.arc(p.width * 0.12, p.height * 0.1, 3, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#fff';
+        ctx.beginPath();
+        ctx.arc(-p.width * 0.12, p.height * 0.09, 1.5, 0, Math.PI * 2);
+        ctx.arc(p.width * 0.12, p.height * 0.09, 1.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Crown / Laurel wreath
+        ctx.fillStyle = '#FFD700';
+        ctx.beginPath();
+        ctx.ellipse(0, p.height * 0.0, p.width * 0.35, p.width * 0.1, 0, Math.PI, Math.PI * 2);
+        ctx.fill();
+        // Crown points
+        for (let i = 0; i < 3; i++) {
+            const angle = -Math.PI + (i + 0.5) * Math.PI / 3;
+            ctx.beginPath();
+            ctx.moveTo(Math.cos(angle) * p.width * 0.3, p.height * 0.0 + Math.sin(angle) * p.width * 0.08);
+            ctx.lineTo(Math.cos(angle) * p.width * 0.35, p.height * 0.0 - p.width * 0.12);
+            ctx.lineTo(Math.cos(angle + 0.3) * p.width * 0.3, p.height * 0.0 + Math.sin(angle + 0.3) * p.width * 0.08);
+            ctx.fill();
+        }
+
+        // Arms
+        const armSwing = Math.sin(p.animTimer * 0.15) * 0.3;
+        ctx.fillStyle = '#f0e6d3';
+        ctx.save();
+        ctx.translate(-p.width * 0.45, p.height * 0.25);
+        ctx.rotate(-0.5 + armSwing);
+        ctx.fillRect(-3, 0, 6, p.height * 0.25);
+        ctx.restore();
+        ctx.save();
+        ctx.translate(p.width * 0.45, p.height * 0.25);
+        ctx.rotate(0.5 - armSwing);
+        ctx.fillRect(-3, 0, 6, p.height * 0.25);
+        ctx.restore();
+
+        // Legs
+        const legSwing = Math.sin(p.animTimer * 0.15) * 0.3;
+        ctx.fillStyle = '#1a3a5c';
+        ctx.save();
+        ctx.translate(-p.width * 0.15, p.height * 0.7);
+        ctx.rotate(-0.3 + legSwing);
+        ctx.fillRect(-3, 0, 6, p.height * 0.3);
+        ctx.restore();
+        ctx.save();
+        ctx.translate(p.width * 0.15, p.height * 0.7);
+        ctx.rotate(0.3 - legSwing);
+        ctx.fillRect(-3, 0, 6, p.height * 0.3);
+        ctx.restore();
+
+        // Lightning glow around Zeus
+        if (p.dashing || p.shieldActive || G.power > 70) {
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = '#FFD700';
+            ctx.strokeStyle = `rgba(255,215,0,${0.1 + Math.sin(G.world.time * 0.1) * 0.05})`;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(0, p.height * 0.3, p.width * 0.5, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+        }
+
+        ctx.restore();
+        ctx.globalAlpha = 1;
+    }
+
+    drawObstacles() {
+        const ctx = this.ctx;
+        const G = GameState;
+
+        G.obstacles.forEach(obs => {
+            const x = this.lanePositions[obs.lane];
+            const y = this.groundY - obs.height;
+
+            ctx.save();
+
+            // Scale with depth (simulate 3D perspective)
+            const depthScale = 1 + (obs.z - G.world.distance) * 0.001;
+
+            switch (obs.type) {
+                case 'rock':
+                    ctx.fillStyle = '#6b5b4f';
+                    ctx.beginPath();
+                    ctx.ellipse(x, y + obs.height * depthScale, obs.width * 0.5 * depthScale, obs.height * 0.5 * depthScale, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.fillStyle = '#5a4a3f';
+                    ctx.beginPath();
+                    ctx.ellipse(x - 5, y + obs.height * depthScale - 3, obs.width * 0.3 * depthScale, obs.height * 0.3 * depthScale, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                    break;
+                case 'spike':
+                    ctx.fillStyle = '#dc2626';
+                    for (let i = -1; i <= 1; i++) {
+                        ctx.beginPath();
+                        ctx.moveTo(x + i * 12 * depthScale, y + obs.height * depthScale);
+                        ctx.lineTo(x + i * 12 * depthScale + 8 * depthScale, y + obs.height * depthScale);
+                        ctx.lineTo(x + i * 12 * depthScale + 4 * depthScale, y);
+                        ctx.closePath();
+                        ctx.fill();
+                    }
+                    // Glow
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = '#ef4444';
+                    break;
+                case 'fire':
+                    const fireH = Math.sin(G.world.time * 0.1 + obs.z) * 10 + 20;
+                    ctx.fillStyle = '#ef4444';
+                    ctx.beginPath();
+                    ctx.ellipse(x, y + obs.height * depthScale, obs.width * 0.4 * depthScale, fireH * depthScale, 0, Math.PI, Math.PI * 2);
+                    ctx.fill();
+                    ctx.fillStyle = '#f97316';
+                    ctx.beginPath();
+                    ctx.ellipse(x, y + obs.height * 0.7 * depthScale + 5, obs.width * 0.25 * depthScale, fireH * 0.6 * depthScale, 0, Math.PI, Math.PI * 2);
+                    ctx.fill();
+                    ctx.fillStyle = '#fbbf24';
+                    ctx.beginPath();
+                    ctx.ellipse(x, y + obs.height * 0.5 * depthScale + 8, obs.width * 0.15 * depthScale, fireH * 0.3 * depthScale, 0, Math.PI, Math.PI * 2);
+                    ctx.fill();
+                    ctx.shadowBlur = 20;
+                    ctx.shadowColor = '#ef4444';
+                    break;
+                case 'monster':
+                    // Simple monster shape
+                    ctx.fillStyle = '#7c3aed';
+                    ctx.beginPath();
+                    ctx.arc(x, y + obs.height * 0.3 * depthScale, obs.width * 0.4 * depthScale, Math.PI, 0);
+                    ctx.lineTo(x + obs.width * 0.4 * depthScale, y + obs.height * depthScale);
+                    ctx.lineTo(x - obs.width * 0.4 * depthScale, y + obs.height * depthScale);
+                    ctx.closePath();
+                    ctx.fill();
+                    // Eyes
+                    ctx.fillStyle = '#ef4444';
+                    ctx.beginPath();
+                    ctx.arc(x - 8 * depthScale, y + obs.height * 0.2 * depthScale, 4 * depthScale, 0, Math.PI * 2);
+                    ctx.arc(x + 8 * depthScale, y + obs.height * 0.2 * depthScale, 4 * depthScale, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.shadowBlur = 15;
+                    ctx.shadowColor = '#7c3aed';
+                    break;
+            }
+
+            ctx.shadowBlur = 0;
+            ctx.restore();
+        });
+    }
+
+    drawCoins() {
+        const ctx = this.ctx;
+        const G = GameState;
+
+        G.coinObjects.forEach(coin => {
+            const x = this.lanePositions[coin.lane];
+            const y = this.groundY - coin.y;
+
+            ctx.save();
+
+            const bounce = Math.sin(G.world.time * 0.08 + coin.z) * 5;
+            const cy = y + bounce;
+
+            // Glow
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = '#FFD700';
+
+            // Coin circle
+            const r = coin.radius;
+            ctx.fillStyle = '#FFD700';
+            ctx.beginPath();
+            ctx.arc(x, cy, r, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Inner detail
+            ctx.fillStyle = '#fbbf24';
+            ctx.beginPath();
+            ctx.arc(x, cy, r * 0.65, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Zeus symbol (simplified)
+            ctx.fillStyle = '#FFD700';
+            ctx.font = `${r}px serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('⚡', x, cy);
+
+            ctx.shadowBlur = 0;
+            ctx.restore();
+        });
+    }
+
+    drawPowerups() {
+        const ctx = this.ctx;
+        const G = GameState;
+
+        G.powerups.forEach(pu => {
+            const x = this.lanePositions[pu.lane];
+            const y = this.groundY - 50;
+
+            ctx.save();
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = pu.color || '#8B5CF6';
+
+            ctx.font = '30px serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(pu.icon || '⚡', x, y + Math.sin(G.world.time * 0.06 + pu.z) * 8);
+
+            ctx.shadowBlur = 0;
+            ctx.restore();
+        });
+    }
+
+    drawBossProjectiles() {
+        const ctx = this.ctx;
+        const G = GameState;
+
+        G.bossProjectiles.forEach(proj => {
+            const x = this.lanePositions[proj.lane];
+            const y = this.groundY - proj.y;
+
+            ctx.save();
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = '#ef4444';
+            ctx.fillStyle = '#ef4444';
+            ctx.beginPath();
+            ctx.arc(x, y, proj.radius || 8, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#fbbf24';
+            ctx.beginPath();
+            ctx.arc(x, y, (proj.radius || 8) * 0.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+            ctx.restore();
+        });
+    }
+
+    drawScreenShake(ctx) {
+        if (GameState.screenShake > 0) {
+            const intensity = GameState.screenShake;
+            ctx.translate(
+                Utils.rand(-intensity, intensity),
+                Utils.rand(-intensity, intensity)
+            );
+        }
+    }
+
+    render() {
+        const G = GameState;
+        const ctx = this.ctx;
+
+        ctx.save();
+        this.drawScreenShake(ctx);
+
+        this.drawSky(G.world.time);
+        this.drawClouds(G.world.time);
+        this.drawGround(G.world.time);
+        this.drawCoins();
+        this.drawObstacles();
+        this.drawPowerups();
+        this.drawBossProjectiles();
+        this.drawPlayer();
+
+        // Particles
+        G.particles.draw(ctx, 0, 0);
+
+        this.drawLightningFlash(G.world.time);
+
+        ctx.restore();
+
+        // HUD is drawn without shake
+        if (G.currentScreen === 'playing') {
+            this.drawHUD();
+        }
+    }
+}
+
+// ============================================
+// 7. GAME LOGIC
+// ============================================
+class GameEngine {
+    constructor() {
+        this.canvas = document.getElementById('gameCanvas');
+        this.renderer = new Renderer(this.canvas);
+        this.state = GameState;
+        this.lastTime = 0;
+        this.accumulator = 0;
+        this.tick = 0;
+        this.running = false;
+        this.animFrame = null;
+
+        this.init();
+    }
+
+    init() {
+        // Setup controls
+        this.setupKeyboard();
+        this.setupTouch();
+        this.setupResize();
+
+        // Init audio on first interaction
+        const initAudio = () => {
+            this.state.audio.init();
+            document.removeEventListener('click', initAudio);
+            document.removeEventListener('touchstart', initAudio);
+            document.removeEventListener('keydown', initAudio);
+        };
+        document.addEventListener('click', initAudio);
+        document.addEventListener('touchstart', initAudio);
+        document.addEventListener('keydown', initAudio);
+
+        // Start render loop
+        this.running = true;
+        this.loop();
+    }
+
+    // --- Controls ---
+    setupKeyboard() {
+        document.addEventListener('keydown', (e) => {
+            this.state.keys[e.key] = true;
+
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                if (this.state.currentScreen === 'welcome') startGame();
+                else if (this.state.currentScreen === 'playing') {
+                    this.playerJump();
+                }
+            }
+
+            if ((e.key === 'Escape' || e.key === 'p' || e.key === 'P') && this.state.currentScreen === 'playing') {
+                pauseGame();
+            } else if ((e.key === 'Escape' || e.key === 'p' || e.key === 'P') && this.state.currentScreen === 'paused') {
+                resumeGame();
+            }
+
+            if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
+                e.preventDefault();
+                if (this.state.currentScreen === 'playing') this.playerJump();
+            }
+            if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') {
+                e.preventDefault();
+                if (this.state.currentScreen === 'playing') this.playerSlide();
+            }
+            if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+                e.preventDefault();
+                if (this.state.currentScreen === 'playing') this.moveLeft();
+            }
+            if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+                e.preventDefault();
+                if (this.state.currentScreen === 'playing') this.moveRight();
+            }
+
+            // Abilities
+            if (e.key === '1' && this.state.currentScreen === 'playing') this.useDash();
+            if (e.key === '2' && this.state.currentScreen === 'playing') this.useShield();
+            if (e.key === '3' && this.state.currentScreen === 'playing') this.useStrike();
+        });
+
+        document.addEventListener('keyup', (e) => {
+            this.state.keys[e.key] = false;
+        });
+    }
+
+    setupTouch() {
+        const canvas = this.canvas;
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchStartTime = 0;
+
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+            touchStartTime = Date.now();
+            this.state.touch.startX = touchStartX;
+            this.state.touch.startY = touchStartY;
+            this.state.touch.swiping = true;
+
+            // Handle screen taps
+            if (this.state.currentScreen === 'welcome') startGame();
+            else if (this.state.currentScreen === 'gameover' || this.state.currentScreen === 'victory') {
+                // Handled by buttons
+            } else if (this.state.currentScreen === 'playing') {
+                // Determine swipe direction on touchend
+            }
+        }, { passive: false });
+
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            if (!this.state.touch.swiping || this.state.currentScreen !== 'playing') return;
+            const touch = e.touches[0];
+            const dx = touch.clientX - this.state.touch.startX;
+            const dy = touch.clientY - this.state.touch.startY;
+
+            if (Math.abs(dx) > 40) {
+                if (dx > 0) this.moveRight();
+                else this.moveLeft();
+                this.state.touch.startX = touch.clientX;
+                this.state.touch.startY = touch.clientY;
+            }
+        }, { passive: false });
+
+        canvas.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            this.state.touch.swiping = false;
+            const touch = e.changedTouches[0];
+            const dx = touch.clientX - touchStartX;
+            const dy = touch.clientY - touchStartY;
+            const dt = Date.now() - touchStartTime;
+
+            if (Math.abs(dx) < 30 && Math.abs(dy) < 30 && dt < 300) {
+                // Tap - jump
+                if (this.state.currentScreen === 'playing') this.playerJump();
+            } else if (dy > 50) {
+                // Swipe down - slide
+                if (this.state.currentScreen === 'playing') this.playerSlide();
+            } else if (dy < -50) {
+                // Swipe up - jump
+                if (this.state.currentScreen === 'playing') this.playerJump();
+            }
+        }, { passive: false });
+
+        canvas.addEventListener('touchcancel', (e) => {
+            this.state.touch.swiping = false;
+        });
+    }
+
+    setupResize() {
+        window.addEventListener('resize', () => {
+            this.renderer.resize();
+        });
+    }
+
+    // --- Player Actions ---
+    playerJump() {
+        const p = this.state.player;
+        if (p.grounded) {
+            p.vy = CONFIG.JUMP_FORCE;
+            p.grounded = false;
+            p.jumping = true;
+            p.canDoubleJump = true;
+            this.state.audio.playJump();
+            this.state.particles.emit(
+                this.renderer.lanePositions[p.lane],
+                this.renderer.groundY,
+                5, 'rgba(255,215,0,0.5)', 2, 15, 3
+            );
+        } else if (p.canDoubleJump && !p.doubleJumped) {
+            p.vy = CONFIG.DOUBLE_JUMP_FORCE;
+            p.doubleJumped = true;
+            p.canDoubleJump = false;
+            this.state.audio.playDoubleJump();
+            this.state.particles.emit(
+                this.renderer.lanePositions[p.lane],
+                this.renderer.groundY - 30,
+                8, 'rgba(139,92,246,0.6)', 3, 20, 4
+            );
+        }
+    }
+
+    playerSlide() {
+        const p = this.state.player;
+        if (!p.grounded && !p.sliding) return;
+        p.sliding = true;
+        p.slideTimer = 30;
+        p.height = CONFIG.PLAYER_HEIGHT * 0.5;
+    }
+
+    moveLeft() {
+        const p = this.state.player;
+        if (p.lane > 0) {
+            p.lane--;
+            p.targetLane = p.lane;
+        }
+    }
+
+    moveRight() {
+        const p = this.state.player;
+        if (p.lane < CONFIG.LANE_COUNT - 1) {
+            p.lane++;
+            p.targetLane = p.lane;
+        }
+    }
+
+    useDash() {
+        const G = this.state;
+        if (G.power >= CONFIG.POWER_DRAIN_DASH && !G.player.dashing) {
+            G.power -= CONFIG.POWER_DRAIN_DASH;
+            G.player.dashing = true;
+            G.player.dashTimer = 40;
+            G.player.speedMultiplier = 2.0;
+            G.world.speed *= 1.5;
+            G.audio.playDash();
+            G.particles.emit(
+                this.renderer.lanePositions[G.player.lane],
+                this.renderer.groundY,
+                15, '#FFD700', 5, 25, 5
+            );
+        }
+    }
+
+    useShield() {
+        const G = this.state;
+        if (G.power >= 20 && !G.player.shieldActive) {
+            G.power -= 20;
+            G.player.shieldActive = true;
+            G.player.shieldTimer = 300; // 5 seconds
+            G.audio.playShield();
+            G.particles.emit(
+                this.renderer.lanePositions[G.player.lane],
+                this.renderer.groundY - 30,
+                10, '#8B5CF6', 3, 30, 4
+            );
+        }
+    }
+
+    useStrike() {
+        const G = this.state;
+        if (G.power >= CONFIG.POWER_DRAIN_STRIKE && G.bossActive) {
+            G.power -= CONFIG.POWER_DRAIN_STRIKE;
+            G.bossHealth -= 10;
+            G.audio.playStrike();
+            G.screenShake = 10;
+            G.lightningFlash = 1.0;
+            G.particles.emit(
+                this.renderer.lanePositions[G.player.lane],
+                this.renderer.groundY - 100,
+                30, '#FFD700', 8, 30, 6
+            );
+            // Check boss defeat
+            if (G.bossHealth <= 0) {
+                this.defeatBoss();
+            }
+        } else if (G.power >= CONFIG.POWER_DRAIN_STRIKE && !G.bossActive) {
+            // Strike on ground - visual effect
+            G.power -= CONFIG.POWER_DRAIN_STRIKE * 0.5;
+            G.lightningFlash = 0.8;
+            G.screenShake = 8;
+            G.particles.emit(
+                this.renderer.lanePositions[G.player.lane],
+                this.renderer.groundY,
+                25, '#FFD700', 6, 25, 5
+            );
+            // Clear nearby obstacles
+            G.obstacles = G.obstacles.filter(obs => {
+                const dist = Math.abs(obs.z - G.world.distance);
+                return dist > 200;
+            });
+            G.audio.playStrike();
+        }
+    }
+
+    // --- Spawning ---
+    spawnObstacle() {
+        const G = this.state;
+        const types = ['rock', 'spike', 'fire', 'monster'];
+        const type = types[Utils.randInt(0, types.length - 1)];
+        const lane = Utils.randInt(0, CONFIG.LANE_COUNT - 1);
+
+        // Don't spawn on player's lane too often
+        if (lane === G.player.lane && Math.random() < 0.6) return;
+
+        G.obstacles.push({
+            type: type,
+            lane: lane,
+            z: G.world.distance + 600,
+            width: 30 + Utils.rand(0, 20),
+            height: 40 + Utils.rand(0, 30),
+            passed: false,
+        });
+    }
+
+    spawnCoin() {
+        const G = this.state;
+        const lane = Utils.randInt(0, CONFIG.LANE_COUNT - 1);
+        G.coinObjects.push({
+            lane: lane,
+            y: 40 + Utils.rand(0, 60),
+            z: G.world.distance + 500,
+            radius: CONFIG.COIN_RADIUS,
+            collected: false,
+        });
+    }
+
+    spawnPowerup() {
+        const G = this.state;
+        const types = [
+            { name: 'lightning', icon: '⚡', color: '#FFD700', effect: 'power' },
+            { name: 'shield', icon: '🛡️', color: '#8B5CF6', effect: 'shield' },
+            { name: 'speed', icon: '💨', color: '#22c55e', effect: 'speed' },
+        ];
+        const type = types[Utils.randInt(0, types.length - 1)];
+        G.powerups.push({
+            ...type,
+            lane: Utils.randInt(0, CONFIG.LANE_COUNT - 1),
+            z: G.world.distance + 500,
+            collected: false,
+        });
+    }
+
+    // --- Boss System ---
+    startBoss(index) {
+        const G = this.state;
+        if (index >= BOSSES.length) return;
+
+        G.bossIndex = index;
+        G.boss = BOSSES[index];
+        G.bossActive = true;
+        G.bossHealth = G.boss.health;
+        G.bossMaxHealth = G.boss.health;
+        G.bossAttackTimer = 0;
+        G.bossProjectiles = [];
+        G.audio.playBossWarning();
+
+        // Clear obstacles during boss
+        G.obstacles = [];
+        G.coinObjects = [];
+
+        showBossWarning(G.boss.name);
+    }
+
+    updateBoss() {
+        const G = this.state;
+        if (!G.bossActive || !G.boss) return;
+
+        G.bossAttackTimer++;
+
+        // Boss attacks periodically
+        if (G.bossAttackTimer > 120 - G.bossIndex * 5) {
+            G.bossAttackTimer = 0;
+
+            // Spawn projectile
+            const lane = Utils.randInt(0, CONFIG.LANE_COUNT - 1);
+            G.bossProjectiles.push({
+                lane: lane,
+                y: 50,
+                z: G.world.distance + 300,
+                vy: 2 + G.bossIndex * 0.2,
+                radius: 8 + G.bossIndex,
+            });
+
+            G.audio.playTone(200, 0.1, 'square');
+
+            // Sometimes spawn multiple
+            if (G.bossIndex > 3 && Math.random() < 0.3) {
+                const lane2 = (lane + 2) % CONFIG.LANE_COUNT;
+                G.bossProjectiles.push({
+                    lane: lane2,
+                    y: 50,
+                    z: G.world.distance + 300,
+                    vy: 2 + G.bossIndex * 0.2,
+                    radius: 8 + G.bossIndex,
+                });
+            }
+        }
+
+        // Move projectiles
+        G.bossProjectiles.forEach(proj => {
+            proj.y += proj.vy;
+        });
+        G.bossProjectiles = G.bossProjectiles.filter(proj => proj.y < 200);
+
+        // Collision with player
+        G.bossProjectiles.forEach(proj => {
+            const px = this.renderer.lanePositions[G.player.lane];
+            const py = this.renderer.groundY - G.player.height;
+            const ppx = this.renderer.lanePositions[proj.lane];
+            const ppy = this.renderer.groundY - proj.y;
+
+            if (Math.abs(px - ppx) < 30 && Math.abs(py - ppy) < 40) {
+                if (!G.player.shieldActive && G.player.invincible <= 0) {
+                    this.playerHit(15);
+                }
+                proj.y = 999; // remove
+            }
+        });
+
+        // Boss collision with player (if close enough in Z)
+        // Simplified: boss exists at a certain Z range
+        const bossDist = G.world.distance % 800;
+        if (bossDist > 700 && bossDist < 780) {
+            // Boss is close
+            if (!G.player.dashing && !G.player.shieldActive && G.player.invincible <= 0) {
+                this.playerHit(10);
+            }
+        }
+
+        // Auto-damage boss when player dashes through
+        if (G.player.dashing && bossDist > 700 && bossDist < 780) {
+            G.bossHealth -= 0.5;
+            if (G.bossHealth <= 0) {
+                this.defeatBoss();
+            }
+        }
+    }
+
+    defeatBoss() {
+        const G = this.state;
+        G.bossActive = false;
+        G.bossDefeated = true;
+        G.score += CONFIG.BOSS_SCORE_BASE + G.bossIndex * 200;
+        G.audio.playVictory();
+        G.particles.emit(
+            this.renderer.width / 2,
+            this.renderer.groundY - 100,
+            50, '#FFD700', 10, 40, 8
+        );
+        G.screenShake = 15;
+        G.lightningFlash = 1.5;
+
+        // Show victory screen
+        showVictoryScreen(G.boss ? G.boss.name : 'Unknown');
+    }
+
+    // --- Collision & Damage ---
+    playerHit(damage) {
+        const G = this.state;
+        const p = G.player;
+
+        if (p.invincible > 0 || p.shieldActive) return;
+
+        p.health -= damage;
+        p.invincible = 60;
+        G.screenShake = 8;
+        G.audio.playHit();
+        G.particles.emit(
+            this.renderer.lanePositions[p.lane],
+            this.renderer.groundY - p.height / 2,
+            10, '#ef4444', 4, 20, 4
+        );
+
+        if (p.health <= 0) {
+            p.health = p.maxHealth;
+            p.lives--;
+            if (p.lives <= 0) {
+                gameOver();
+            } else {
+                // Respawn
+                p.invincible = 120;
+            }
+        }
+    }
+
+    checkCollisions() {
+        const G = this.state;
+        const p = G.player;
+        const px = this.renderer.lanePositions[p.lane];
+        const py = this.renderer.groundY - p.height;
+        const pw = p.width;
+        const ph = p.height;
+
+        // Obstacles
+        G.obstacles.forEach(obs => {
+            const ox = this.renderer.lanePositions[obs.lane];
+            const oy = this.renderer.groundY - obs.height;
+            const ow = obs.width;
+            const oh = obs.height;
+
+            // Z distance check
+            const zDist = Math.abs(obs.z - G.world.distance);
+            if (zDist < 60) {
+                if (Utils.rectCollide(
+                    { x: px - pw/2, y: py, w: pw, h: ph },
+                    { x: ox - ow/2, y: oy, w: ow, h: oh }
+                )) {
+                    if (!p.dashing) {
+                        this.playerHit(15);
+                    }
+                }
+            }
+        });
+
+        // Coins
+        G.coinObjects.forEach(coin => {
+            if (coin.collected) return;
+            const cx = this.renderer.lanePositions[coin.lane];
+            const cy = this.renderer.groundY - coin.y;
+            const zDist = Math.abs(coin.z - G.world.distance);
+            if (zDist < 40 && Utils.dist(px, py + ph/2, cx, cy) < coin.radius + 20) {
+                coin.collected = true;
+                G.coins++;
+                G.score += CONFIG.COIN_VALUE;
+                G.power = Math.min(G.maxPower, G.power + 3);
+                G.audio.playCoin();
+                G.particles.emit(cx, cy, 5, '#FFD700', 2, 15, 3);
+            }
+        });
+
+        // Powerups
+        G.powerups.forEach(pu => {
+            if (pu.collected) return;
+            const px2 = this.renderer.lanePositions[pu.lane];
+            const py2 = this.renderer.groundY - 50;
+            const zDist = Math.abs(pu.z - G.world.distance);
+            if (zDist < 40 && Math.abs(px2 - px) < 30) {
+                pu.collected = true;
+                G.audio.playTone(600, 0.15, 'sine');
+                G.particles.emit(px2, py2, 10, pu.color, 3, 20, 4);
+
+                switch (pu.effect) {
+                    case 'power':
+                        G.power = Math.min(G.maxPower, G.power + 30);
+                        break;
+                    case 'shield':
+                        G.player.shieldActive = true;
+                        G.player.shieldTimer = 300;
+                        break;
+                    case 'speed':
+                        G.player.speedMultiplier = 1.5;
+                        G.world.speed *= 1.3;
+                        setTimeout(() => {
+                            G.player.speedMultiplier = 1.0;
+                            G.world.speed = CONFIG.BASE_SPEED + G.world.distance * CONFIG.SPEED_INCREMENT;
+                        }, 3000);
+                        break;
+                }
+            }
+        });
+
+        // Cleanup
+        G.obstacles = G.obstacles.filter(obs => obs.z > G.world.distance - 200);
+        G.coinObjects = G.coinObjects.filter(c => !c.collected && c.z > G.world.distance - 200);
+        G.powerups = G.powerups.filter(p => !p.collected && p.z > G.world.distance - 200);
+    }
+
+    // --- Update ---
+    update() {
+        const G = this.state;
+        if (G.currentScreen !== 'playing') return;
+
+        const p = G.player;
+        G.world.time++;
+        this.tick++;
+
+        // ---- World Speed ----
+        G.world.speed = Math.min(
+            CONFIG.MAX_SPEED,
+            CONFIG.BASE_SPEED + G.world.distance * CONFIG.SPEED_INCREMENT
+        ) * p.speedMultiplier;
+
+        // ---- Distance ----
+        G.world.distance += G.world.speed * 0.1;
+        G.score += G.world.speed * 0.01;
+
+        // ---- Player Physics ----
+        if (!p.grounded) {
+            p.vy += CONFIG.GRAVITY;
+            if (p.vy > 0 && p.jumping) {
+                p.doubleJumped = false;
+            }
+        }
+
+        // Ground check
+        if (p.vy >= 0 && this.renderer.groundY - p.height <= this.renderer.groundY - p.height + p.vy) {
+            p.grounded = true;
+            p.jumping = false;
+            p.doubleJumped = false;
+            p.canDoubleJump = true;
+            p.vy = 0;
+        }
+
+        // Slide timer
+        if (p.sliding) {
+            p.slideTimer--;
+            if (p.slideTimer <= 0) {
+                p.sliding = false;
+                p.height = CONFIG.PLAYER_HEIGHT;
+            }
+        }
+
+        // Dash timer
+        if (p.dashing) {
+            p.dashTimer--;
+            if (p.dashTimer <= 0) {
+                p.dashing = false;
+                p.speedMultiplier = 1.0;
+                G.world.speed = CONFIG.BASE_SPEED + G.world.distance * CONFIG.SPEED_INCREMENT;
+            }
+        }
+
+        // Shield timer
+        if (p.shieldActive) {
+            p.shieldTimer--;
+            G.power -= CONFIG.POWER_DRAIN_SHIELD;
+            if (p.shieldTimer <= 0 || G.power <= 0) {
+                p.shieldActive = false;
+            }
+        }
+
+        // Invincibility
+        if (p.invincible > 0) p.invincible--;
+
+        // Animations
+        p.animTimer++;
+
+        // ---- Power Regeneration ----
+        if (!p.dashing && !p.shieldActive) {
+            G.power = Math.min(G.maxPower, G.power + CONFIG.POWER_GAIN_RATE);
+        }
+
+        // ---- Lightning Flashes (random) ----
+        if (Math.random() < 0.001) {
+            G.lightningFlash = 0.5 + Math.random() * 0.5;
+        }
+        if (G.lightningFlash > 0) G.lightningFlash -= 0.02;
+
+        // ---- Screen Shake Decay ----
+        if (G.screenShake > 0) G.screenShake *= 0.9;
+        if (G.screenShake < 0.1) G.screenShake = 0;
+
+        // ---- Spawn Obstacles ----
+        G.obstacleSpawnTimer++;
+        const spawnRate = Math.max(20, CONFIG.obstacleSpawnInterval - G.world.distance * 0.001);
+        if (G.obstacleSpawnTimer > spawnRate && !G.bossActive) {
+            G.obstacleSpawnTimer = 0;
+            this.spawnObstacle();
+            // Sometimes spawn multiple
+            if (Math.random() < 0.2) this.spawnObstacle();
+        }
+
+        // ---- Spawn Coins ----
+        G.coinSpawnTimer++;
+        if (G.coinSpawnTimer > CONFIG.coinSpawnInterval && !G.bossActive) {
+            G.coinSpawnTimer = 0;
+            this.spawnCoin();
+            // Coin lines
+            if (Math.random() < 0.3) {
+                for (let i = 0; i < 3; i++) {
+                    const c = {
+                        lane: G.player.lane + (i - 1),
+                        y: 40 + Utils.rand(0, 30),
+                        z: G.world.distance + 500 + i * 40,
+                        radius: CONFIG.COIN_RADIUS,
+                        collected: false,
+                    };
+                    if (c.lane >= 0 && c.lane < CONFIG.LANE_COUNT) {
+                        G.coinObjects.push(c);
+                    }
+                }
+            }
+        }
+
+        // ---- Spawn Powerups ----
+        if (Math.random() < 0.003 && !G.bossActive) {
+            this.spawnPowerup();
+        }
+
+        // ---- Boss Check ----
+        if (!G.bossActive && G.bossIndex + 1 < BOSSES.length) {
+            const nextMilestone = CONFIG.BOSS_MILESTONES[G.bossIndex + 1];
+            if (G.score >= nextMilestone) {
+                this.startBoss(G.bossIndex + 1);
+            }
+        }
+
+        // ---- Boss Update ----
+        if (G.bossActive) {
+            this.updateBoss();
+        }
+
+        // ---- Collisions ----
+        this.checkCollisions();
+
+        // ---- Particles ----
+        G.particles.update();
+
+        // ---- Win Check ----
+        if (G.score >= CONFIG.WIN_SCORE) {
+            G.currentScreen = 'endstory';
+            showEndStory();
+        }
+    }
+
+    // --- Game Loop ---
+    loop() {
+        if (!this.running) return;
+
+        this.update();
+        this.renderer.render();
+
+        this.animFrame = requestAnimationFrame(() => this.loop());
+    }
+
+    // --- Reset ---
+    reset() {
+        const G = this.state;
+        G.player.x = 0;
+        G.player.y = 0;
+        G.player.z = 0;
+        G.player.vy = 0;
+        G.player.lane = 2;
+        G.player.targetLane = 2;
+        G.player.jumping = false;
+        G.player.doubleJumped = false;
+        G.player.canDoubleJump = true;
+        G.player.sliding = false;
+        G.player.slideTimer = 0;
+        G.player.grounded = true;
+        G.player.health = CONFIG.INITIAL_HEALTH;
+        G.player.lives = CONFIG.INITIAL_LIVES;
+        G.player.invincible = 0;
+        G.player.shieldActive = false;
+        G.player.shieldTimer = 0;
+        G.player.dashing = false;
+        G.player.dashTimer = 0;
+        G.player.speedMultiplier = 1.0;
+        G.player.animTimer = 0;
+
+        G.world.speed = CONFIG.BASE_SPEED;
+        G.world.distance = 0;
+        G.world.time = 0;
+
+        G.score = 0;
+        G.coins = 0;
+        G.power = 50;
+
+        G.obstacles = [];
+        G.obstacleSpawnTimer = 0;
+        G.coinObjects = [];
+        G.coinSpawnTimer = 0;
+
+        G.boss = null;
+        G.bossActive = false;
+        G.bossIndex = -1;
+        G.bossDefeated = false;
+        G.bossHealth = 0;
+        G.bossMaxHealth = 0;
+        G.bossAttackTimer = 0;
+        G.bossProjectiles = [];
+
+        G.powerups = [];
+        G.particles.clear();
+        G.screenShake = 0;
+        G.lightningFlash = 0;
+
+        G.currentScreen = 'playing';
+    }
+}
+
+// ============================================
+// 8. SCREEN MANAGEMENT
+// ============================================
+let engine = null;
+
+function initGame() {
+    engine = new GameEngine();
+}
+
+function startGame() {
+    document.querySelectorAll('.overlay').forEach(s => s.classList.remove('active'));
+    if (!engine) initGame();
+    engine.reset();
+    engine.state.currentScreen = 'playing';
+    engine.state.audio.init();
+}
+
+function pauseGame() {
+    const G = engine.state;
+    if (G.currentScreen !== 'playing') return;
+    G.currentScreen = 'paused';
+    document.getElementById('pauseScreen').classList.add('active');
+}
+
+function resumeGame() {
+    const G = engine.state;
+    if (G.currentScreen !== 'paused') return;
+    G.currentScreen = 'playing';
+    document.getElementById('pauseScreen').classList.remove('active');
+}
+
+function restartGame() {
+    document.querySelectorAll('.overlay').forEach(s => s.classList.remove('active'));
+    engine.reset();
+    engine.state.currentScreen = 'playing';
+}
+
+function quitToMenu() {
+    document.querySelectorAll('.overlay').forEach(s => s.classList.remove('active'));
+    if (engine) {
+        engine.state.currentScreen = 'welcome';
+    }
+    document.getElementById('welcomeScreen').classList.add('active');
+}
+
+function gameOver() {
+    const G = engine.state;
+    G.currentScreen = 'gameover';
+
+    // Update high score
+    if (G.score > G.highScore) {
+        G.highScore = Math.floor(G.score);
+        localStorage.setItem('zeusDashHighScore', G.highScore.toString());
+    }
+
+    // Update stats
+    document.getElementById('goScore').textContent = Math.floor(G.score);
+    document.getElementById('goDistance').textContent = Math.floor(G.world.distance) + 'm';
+    document.getElementById('goCoins').textContent = G.coins;
+    document.getElementById('goHighScore').textContent = G.highScore;
+
+    G.audio.playGameOver();
+
+    document.getElementById('gameOverScreen').classList.add('active');
+}
+
+function showVictoryScreen(bossName) {
+    const G = engine.state;
+    G.currentScreen = 'victory';
+    document.getElementById('victoryBossName').textContent = `Defeated: ${bossName}`;
+    document.getElementById('vScore').textContent = Math.floor(G.score);
+    document.getElementById('vCoins').textContent = G.coins;
+    document.getElementById('victoryScreen').classList.add('active');
+}
+
+function continueAfterVictory() {
+    document.getElementById('victoryScreen').classList.remove('active');
+    engine.state.currentScreen = 'playing';
+    engine.state.bossDefeated = false;
+    engine.state.bossActive = false;
+    engine.state.boss = null;
+}
+
+function showBossWarning(bossName) {
+    const G = engine.state;
+    G.currentScreen = 'bosswarning';
+    document.getElementById('bossWarningName').textContent = bossName;
+    document.getElementById('bossWarningScreen').classList.add('active');
+    G.bossWarningTimer = 120; // 2 seconds countdown
+
+    // Auto-dismiss after countdown
+    let count = 3;
+    const interval = setInterval(() => {
+        count--;
+        document.getElementById('bossWarningCountdown').textContent = `Battle in ${count}...`;
+        if (count <= 0) {
+            clearInterval(interval);
+            document.getElementById('bossWarningScreen').classList.remove('active');
+            if (G.currentScreen === 'bosswarning') {
+                G.currentScreen = 'playing';
+            }
+        }
+    }, 1000);
+}
+
+function showEndStory() {
+    document.getElementById('endStoryScreen').classList.add('active');
+}
+
+// ============================================
+// 9. POLYFILL: roundRect
+// ============================================
+if (!CanvasRenderingContext2D.prototype.roundRect) {
+    CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
+        if (r > w / 2) r = w / 2;
+        if (r > h / 2) r = h / 2;
+        this.moveTo(x + r, y);
+        this.lineTo(x + w - r, y);
+        this.quadraticCurveTo(x + w, y, x + w, y + r);
+        this.lineTo(x + w, y + h - r);
+        this.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+        this.lineTo(x + r, y + h);
+        this.quadraticCurveTo(x, y + h, x, y + h - r);
+        this.lineTo(x, y + r);
+        this.quadraticCurveTo(x, y, x + r, y);
+        this.closePath();
+        return this;
+    };
+}
+
+// ============================================
+// 10. INIT ON LOAD
+// ============================================
+window.addEventListener('DOMContentLoaded', () => {
+    initGame();
+
+    // Button event listeners
+    document.getElementById('getStartedBtn').addEventListener('click', startGame);
+});
+
+// Also allow enter on welcome screen
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && document.getElementById('welcomeScreen').classList.contains('active')) {
+        startGame();
+    }
+});
+
+console.log('⚡ ZEUS DASH v1.0 - Loaded successfully!');
+console.log('© Zeus Dash - Game by ZEUS & Danny');
+console.log('Contact: 09066760078 (ZEUS) | 08062285862 (Danny)');
+</script>
+</body>
+</html>
